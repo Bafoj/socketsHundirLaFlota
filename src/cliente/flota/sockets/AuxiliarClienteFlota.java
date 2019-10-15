@@ -113,7 +113,7 @@ public class AuxiliarClienteFlota {
 		   barcos[i]=mySocket.receiveMessage();
 	   }
 	   
-	   return barcos; // cambiar por el retorno correcto
+	   return barcos;
 	   
     } // end getSolucion
    

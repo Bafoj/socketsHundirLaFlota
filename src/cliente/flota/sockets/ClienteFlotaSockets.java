@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import javax.swing.*;
 
@@ -17,7 +19,7 @@ public class ClienteFlotaSockets {
 	public static final int NUMFILAS=8, NUMCOLUMNAS=8, NUMBARCOS=6;
 
 	private GuiTablero guiTablero = null;			// El juego se encarga de crear y modificar la interfaz gráfica
-	private Partida partida = null;                 // Objeto con los datos de la partida en juego
+	private AuxiliarClienteFlota partida = null;                 // Objeto con los datos de la partida en juego
 	
 	/** Atributos de la partida guardados en el juego para simplificar su implementación */
 	private int quedan = NUMBARCOS, disparos = 0;
@@ -25,9 +27,12 @@ public class ClienteFlotaSockets {
 	/**
 	 * Programa principal. Crea y lanza un nuevo juego
 	 * @param args
+	 * @throws IOException 
+	 * @throws UnknownHostException 
+	 * @throws SocketException 
 	 */
-	public static void main(String[] args) {
-		Juego juego = new Juego();
+	public static void main(String[] args) throws SocketException, UnknownHostException, IOException {
+		ClienteFlotaSockets juego = new ClienteFlotaSockets();
 		juego.ejecuta();
 	} // end main
 
@@ -36,7 +41,12 @@ public class ClienteFlotaSockets {
 	 */
 	private void ejecuta() {
 		// Instancia la primera partida
-		partida = new Partida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
+		try {
+			partida = new AuxiliarClienteFlota("localhost","13");
+			partida.nuevaPartida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -181,9 +191,12 @@ public class ClienteFlotaSockets {
 				}
 				
 			}
-				
+			try {
 			for(String barco:partida.getSolucion()) {
 				 pintaBarco(barco, Color.GREEN);
+			}
+			}catch (IOException e) {
+				e.printStackTrace();
 			}
 			quedan=0;
 			actualizaEstado();
@@ -271,7 +284,11 @@ public class ClienteFlotaSockets {
 			switch (texto) {
 			case "Nueva partida":
 				guiTablero.limpiaTablero();
-				partida=new Partida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
+				try {
+					partida.nuevaPartida(NUMFILAS, NUMCOLUMNAS, NUMBARCOS);
+				}catch(IOException ex) {
+					ex.printStackTrace();
+				}
 				quedan=NUMBARCOS;
 				disparos=0;
 				guiTablero.actualizaEstado();
@@ -303,26 +320,30 @@ public class ClienteFlotaSockets {
 		@Override
 		public void actionPerformed(ActionEvent e) {
             // POR IMPLEMENTAR
-			if(quedan>0) {
-			JButton boton = (JButton)e.getSource();
-			String[] cadena=((String)boton.getClientProperty(boton)).split("#");
-			int res=partida.pruebaCasilla(Integer.parseInt(cadena[0]), Integer.parseInt(cadena[1]));
-			switch (res) {
-			case Partida.AGUA:
-				guiTablero.pintaBoton(boton, Color.BLUE);
-				break;
-			case Partida.TOCADO:
-				guiTablero.pintaBoton(boton, Color.ORANGE);
-				break;
-			case Partida.HUNDIDO:
-				break;
-			default:
-				guiTablero.pintaBarcoHundido(partida.getBarco(res));
-				quedan--;
-				break;
-			}
-			disparos++;
-			guiTablero.actualizaEstado();
+			try {
+				if(quedan>0) {
+				JButton boton = (JButton)e.getSource();
+				String[] cadena=((String)boton.getClientProperty(boton)).split("#");
+				int res=partida.pruebaCasilla(Integer.parseInt(cadena[0]), Integer.parseInt(cadena[1]));
+				switch (res) {
+				case -1: //AGUA
+					guiTablero.pintaBoton(boton, Color.BLUE);
+					break;
+				case -2: //TOCADO
+					guiTablero.pintaBoton(boton, Color.ORANGE);
+					break;
+				case -3: //HUNDIDO
+					break;
+				default:
+					guiTablero.pintaBarcoHundido(partida.getBarco(res));
+					quedan--;
+					break;
+				}
+				disparos++;
+				guiTablero.actualizaEstado();
+				}
+			}catch (IOException ex) {
+				ex.printStackTrace();
 			}
         } // end actionPerformed
 
