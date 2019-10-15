@@ -304,7 +304,12 @@ public class ClienteFlotaSockets {
 				guiTablero.muestraSolucion();
 				break;
 			case "Salir":
-				 System.exit(0);
+				try {
+					partida.fin();
+				}catch(IOException ex){
+					ex.printStackTrace();
+				}
+				System.exit(0);
 				break;
 			
 			}

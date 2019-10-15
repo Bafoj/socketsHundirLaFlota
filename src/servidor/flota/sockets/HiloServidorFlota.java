@@ -33,18 +33,17 @@ class HiloServidorFlota implements Runnable {
    public void run( ) {
       int operacion = 0;
       boolean done = false;
-      // ...
+      String[] mensage = null;
       try {
          while (!done) {
         	 // Recibe una peticion del cliente
         	 // Extrae la operación y los argumentos
-             String[] mensage = (myDataSocket.receiveMessage()).split("#");
+             mensage = (myDataSocket.receiveMessage()).split("#");
              operacion=Integer.parseInt(mensage[0]);
              switch (operacion) {
              case 0:  // fin de conexión con el cliente
             	 done=true;
             	 myDataSocket.close();
-            	
             	 break;
 
              case 1: { // Crea nueva partida
