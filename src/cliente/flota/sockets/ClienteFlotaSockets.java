@@ -174,6 +174,9 @@ public class ClienteFlotaSockets {
 		public void cambiaEstado(String cadenaEstado) {
 			estado.setText(cadenaEstado);
 		} // end cambiaEstado
+		/**
+		 * Actualiza el texto del jlabel dependiendo de la fase de la partida
+		 */
 		private void actualizaEstado() {
 			if(quedan>0) 
 			cambiaEstado("Intentos: " + disparos + "    Barcos restantes: " + quedan);
@@ -202,7 +205,11 @@ public class ClienteFlotaSockets {
 			actualizaEstado();
 			
 		} // end muestraSolucion
-
+		/**
+		 * Pinta todas las casillas que ocupa un barco de un color pasado como parámetro
+		 * @param cadenaBarco
+		 * @param color
+		 */
 		private void pintaBarco(String cadenaBarco,Color color) {
 			String[] vectorBarco= cadenaBarco.split("#");
             int cont=Integer.parseInt(vectorBarco[3]);

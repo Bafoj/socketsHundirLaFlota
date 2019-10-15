@@ -23,8 +23,7 @@ class HiloServidorFlota implements Runnable {
 	 * @param	myDataSocket	socket stream para comunicarse con el cliente
 	 */
    HiloServidorFlota(MyStreamSocket myDataSocket) {
-	   
-      // Por implementar
+	   this.myDataSocket=myDataSocket;
 	   
    }
  
@@ -39,27 +38,45 @@ class HiloServidorFlota implements Runnable {
          while (!done) {
         	 // Recibe una peticion del cliente
         	 // Extrae la operación y los argumentos
-                      
+             String[] mensage = (myDataSocket.receiveMessage()).split("#");
+             operacion=Integer.parseInt(mensage[0]);
              switch (operacion) {
              case 0:  // fin de conexión con el cliente
-            	 // ...
+            	 done=true;
+            	 myDataSocket.close();
+            	
             	 break;
 
              case 1: { // Crea nueva partida
-            	 // ...
+            	 int nf=Integer.parseInt(mensage[1]);
+            	 int nc=Integer.parseInt(mensage[2]);
+            	 int nb=Integer.parseInt(mensage[3]);
+            	 partida=new Partida(nf,nc,nb);
             	 break;
              }             
              case 2: { // Prueba una casilla y devuelve el resultado al cliente
-            	 // ... 
+            	 int fila=Integer.parseInt(mensage[1]);
+            	 int columna=Integer.parseInt(mensage[2]);
+            	 int res=partida.pruebaCasilla(fila, columna);
+            	 myDataSocket.sendMessage(Integer.toString(res));
                  break;
              }
              case 3: { // Obtiene los datos de un barco y se los devuelve al cliente
-            	 // ... 
+            	 int id=Integer.parseInt(mensage[1]);
+            	 String datos=partida.getBarco(id); //Obtiene la cadena de datos del barco
+            	 myDataSocket.sendMessage(datos);
                  break;
              }
              case 4: { // Devuelve al cliente la solucion en forma de vector de cadenas
-        	   // Primero envia el numero de barcos 
+            	 String[] sol=partida.getSolucion();
+        	   // Primero envia el numero de barcos
+            	 int nbarcos=sol.length;
+            	 myDataSocket.sendMessage(Integer.toString(nbarcos));
                // Despues envia una cadena por cada barco
+            	 for(int i=0;i < nbarcos;i++) {
+            		 myDataSocket.sendMessage(sol[i]);
+            	 }
+            	 
                break;
              }
          } // fin switch

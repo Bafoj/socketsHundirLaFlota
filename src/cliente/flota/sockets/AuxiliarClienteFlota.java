@@ -104,9 +104,7 @@ public class AuxiliarClienteFlota {
     */
    public String[] getSolucion() throws IOException {
 	   
-	   // Por implementar
-	   String parametros = Integer.toString(4);
-	   mySocket.sendMessage(parametros);
+	   mySocket.sendMessage("4");
 	   int nbarcos=Integer.parseInt(mySocket.receiveMessage());
 	   String[] barcos=new String[nbarcos];
 	   for(int i=0;i<nbarcos;i++) {

@@ -1,5 +1,6 @@
 package servidor.flota.sockets;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 
 import comun.flota.sockets.MyStreamSocket;
@@ -18,6 +19,20 @@ public class ServidorFlotaSockets {
 	   
 	  // Acepta conexiones vÃ­a socket de distintos clientes.
 	  // Por cada conexiÃ³n establecida lanza una hebra de la clase HiloServidorFlota.
+	   int puerto=13;
+	   try {
+			ServerSocket servidor=new ServerSocket(puerto);
+			System.out.println("Servidor flota listo");
+			while(true) {
+				System.out.println("Esperando conexión");
+				MyStreamSocket socket = new MyStreamSocket(servidor.accept());
+				System.out.println("Conexión aceptada");
+				Thread hilo=new Thread(new HiloServidorFlota(socket));
+				hilo.start();
+			}
+	   } catch (IOException e) {
+		   e.printStackTrace();
+	   }
 	   
 
 	  // Revisad el apartado 5.5 del libro de Liu
