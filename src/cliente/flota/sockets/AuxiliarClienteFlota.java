@@ -26,8 +26,9 @@ public class AuxiliarClienteFlota {
    AuxiliarClienteFlota(String hostName,
                      String portNum) throws SocketException,
                      UnknownHostException, IOException {
-	   
-  	   // Por implementar	   
+	   this.serverHost=InetAddress.getByName(hostName);
+	   this.serverPort=Integer.parseInt(portNum);
+	   mySocket=new MyStreamSocket(serverHost,serverPort);
 	   
    } // end constructor
    
@@ -36,9 +37,9 @@ public class AuxiliarClienteFlota {
 	 * con el formato: "0"
 	 * @throws	IOException
 	 */
-   public void fin( ) {
-	   
-	   // Por implementar
+   public void fin( )throws	IOException {
+		mySocket.sendMessage("0");
+		mySocket.close();
 	   
    } // end fin 
   
@@ -51,8 +52,10 @@ public class AuxiliarClienteFlota {
     * @throws IOException
     */
    public void nuevaPartida(int nf, int nc, int nb)  throws IOException {
+	 
+	   String parametros = 1+"#"+nf+"#"+nc+"#"+nb;
+	   mySocket.sendMessage(parametros);
 	   
-	   // Por implementar
 	   
    } // end nuevaPartida
 
@@ -66,9 +69,11 @@ public class AuxiliarClienteFlota {
     * @throws IOException
     */
    public int pruebaCasilla(int f, int c) throws IOException {
-	   
-	   // Por implementar
-	   return 0; // cambiar por el retorno correcto
+	
+	   String parametros = 2+"#"+f+"#"+c;
+	   mySocket.sendMessage(parametros);
+	   String mensage=mySocket.receiveMessage();
+	   return Integer.parseInt(mensage); 
 	   
     } // end pruebaCasilla
    
@@ -83,7 +88,10 @@ public class AuxiliarClienteFlota {
    public String getBarco(int idBarco) throws IOException {
 	   
 	   // Por implementar
-	   return null; // cambiar por el retorno correcto
+	   String parametros = 3+"#"+idBarco;
+	   mySocket.sendMessage(parametros);
+	   String mensage=mySocket.receiveMessage();
+	   return mensage;
 	   
     } // end getBarco
    
@@ -97,7 +105,15 @@ public class AuxiliarClienteFlota {
    public String[] getSolucion() throws IOException {
 	   
 	   // Por implementar
-	   return null; // cambiar por el retorno correcto
+	   String parametros = Integer.toString(4);
+	   mySocket.sendMessage(parametros);
+	   int nbarcos=Integer.parseInt(mySocket.receiveMessage());
+	   String[] barcos=new String[nbarcos];
+	   for(int i=0;i<nbarcos;i++) {
+		   barcos[i]=mySocket.receiveMessage();
+	   }
+	   
+	   return barcos; // cambiar por el retorno correcto
 	   
     } // end getSolucion
    
