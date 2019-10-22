@@ -24,7 +24,6 @@ class HiloServidorFlota implements Runnable {
 	 */
    HiloServidorFlota(MyStreamSocket myDataSocket) {
 	   this.myDataSocket=myDataSocket;
-	   
    }
  
    /**
