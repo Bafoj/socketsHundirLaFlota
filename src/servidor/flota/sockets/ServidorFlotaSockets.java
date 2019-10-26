@@ -20,8 +20,7 @@ public class ServidorFlotaSockets {
 	  // Acepta conexiones vía socket de distintos clientes.
 	  // Por cada conexión establecida lanza una hebra de la clase HiloServidorFlota.
 	   int puerto=13;
-	   try {
-			ServerSocket servidor=new ServerSocket(puerto);
+	   try(ServerSocket servidor=new ServerSocket(puerto)) {
 			System.out.println("Servidor flota listo");
 			while(true) {
 				System.out.println("Esperando conexi�n");
@@ -30,7 +29,7 @@ public class ServidorFlotaSockets {
 				Thread hilo=new Thread(new HiloServidorFlota(socket));
 				hilo.start();
 			}
-	   } catch (IOException e) {
+	   } catch (Exception e) {
 		   e.printStackTrace();
 	   }
 	   
