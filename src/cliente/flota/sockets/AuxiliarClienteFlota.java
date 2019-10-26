@@ -69,12 +69,8 @@ public class AuxiliarClienteFlota {
     * @throws IOException
     */
    public int pruebaCasilla(int f, int c) throws IOException {
-	
-	   String parametros = 2+"#"+f+"#"+c;
-	   mySocket.sendMessage(parametros);
-	   String mensage=mySocket.receiveMessage();
-	   return Integer.parseInt(mensage); 
-	   
+	   mySocket.sendMessage(2+"#"+f+"#"+c);
+	   return Integer.parseInt(mySocket.receiveMessage()); 
     } // end pruebaCasilla
    
    /**
@@ -86,13 +82,8 @@ public class AuxiliarClienteFlota {
     * @throws IOException
     */
    public String getBarco(int idBarco) throws IOException {
-	   
-	   // Por implementar
-	   String parametros = 3+"#"+idBarco;
-	   mySocket.sendMessage(parametros);
-	   String mensage=mySocket.receiveMessage();
-	   return mensage;
-	   
+	   mySocket.sendMessage(3+"#"+idBarco);
+	   return mySocket.receiveMessage();
     } // end getBarco
    
    /**
